@@ -9,51 +9,52 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
-
+/******************************************************///引擎使用的设置
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
+app.set('view engine', 'html');
+app.engine('html', require('ejs').__express);
+/******************************************************////----------end
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(bodyParser.urlencoded({ extended: false }));//url中间件
+app.use(cookieParser());//cookie的中间件
+app.use(express.static(path.join(__dirname, 'public')));//静态文件中间件
+/*****************************************************///路由的配置
 app.use('/', routes);
 app.use('/users', users);
-
+/****************************************************///捕获404错误并转发到错误处理的中间件
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
-
+/****************************************************///错误处理的中间件有四个参数
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+    app.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {//渲染模板
+            message: err.message,
+            error: err
+        });
     });
-  });
 }
 
 // production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+// no stacktraces leaked to user//生产环境没有堆栈信息
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 
